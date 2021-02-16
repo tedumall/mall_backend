@@ -1,3 +1,4 @@
+import hashlib
 import json
 import time
 
@@ -8,14 +9,28 @@ from django.shortcuts import render
 # Create your views here.
 import jwt
 
+from tools.response_tool import ResponseUtil
+from users.models import UmsAdmin
+
 
 def login(request):
     json_str = request.body
     json_obj = json.loads(json_str)
     username = json_obj["username"]
     password = json_obj["password"]
+    try:
+        user = UmsAdmin.objects.get(username=username)
+    except Exception as e:
+        return ResponseUtil.validateFailed("用户名或密码错误")
+
+    md5 = hashlib.md5()
+    md5.update(password.encode())
+    pass_h = md5.hexdigest()
+    if pass_h != user.password:
+        return ResponseUtil.validateFailed("用户名或密码错误")
+
     res = {"tokenHead": "Bearer", "token": make_token("admin")}
-    return JsonResponse({"code": 200, "message": "成功", "data": res})
+    return ResponseUtil.success(res)
 
 
 def make_token(username, expire=3600 * 24):

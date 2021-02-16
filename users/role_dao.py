@@ -1,0 +1,24 @@
+import datetime
+import json
+
+from django.core import serializers
+
+from users.models import *
+
+
+def getMenuList(adminId):
+    role = get_roles(adminId)
+
+    role_menus_list = UmsRoleMenus.objects.filter(role_id=role.id).values("menu_id")
+    query_list = UmsMenus.objects.filter(id__in=role_menus_list)
+    menus_list = []
+    for q in query_list:
+        menus_list.append(q.serize())
+    print(menus_list)
+    return menus_list
+
+
+def get_roles(adminId):
+    user = UmsAdmin.objects.get(id=adminId)
+    role = user.role
+    return role
