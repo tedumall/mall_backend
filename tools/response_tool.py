@@ -24,8 +24,8 @@ class ResponseUtil:
     @staticmethod
     def validateFailed(msg):
         """
-     参数验证失败返回结果
-        :param msg 提示信息:
+        参数验证失败返回结果
+        :param msg:提示信息
         :return:
         """
         result = ResultCode.VALIDATE_FAILED.value

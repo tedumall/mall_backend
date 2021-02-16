@@ -11,8 +11,17 @@ class UmsRole(models.Model):
     status = models.IntegerField("启用状态：0->禁用；1->启用", default=1)
     sort = models.IntegerField("排序", default=0)
 
+    def serize(self):
+        role_dict = {}
+        role_dict["name"] = self.name
+        role_dict["description"] = self.description
+        role_dict["create_time"] = convert_time(self.create_time)
+        role_dict["admin_count"] = self.admin_count
+        role_dict["status"] = self.status
+        role_dict["sort"] = self.sort
+        return role_dict
 
-# Create your models here.
+
 class UmsAdmin(models.Model):
     username = models.CharField("用户名", max_length=64)
     password = models.CharField("密码", max_length=64)
@@ -24,6 +33,20 @@ class UmsAdmin(models.Model):
     login_time = models.DateTimeField("最后登录时间", null=True)
     status = models.IntegerField("帐号启用状态：0->禁用；1->启用", default=1)
     role = models.ForeignKey(UmsRole, on_delete=models.CASCADE, null=True)
+
+    def serize(self):
+        user_dict = {}
+        user_dict["id"] = self.id
+        user_dict["username"] = self.username
+        user_dict["password"] = self.password
+        user_dict["icon"] = str(self.icon)
+        user_dict["nickName"] = self.nick_name
+        user_dict["note"] = self.note
+        user_dict["email"] = self.email
+        user_dict["createTime"] = convert_time(self.create_time)if self.create_time else None
+        user_dict["status"] = self.status
+        user_dict["loginTime"] = convert_time(self.login_time) if self.login_time else None
+        return user_dict
 
 
 class UmsMenus(models.Model):

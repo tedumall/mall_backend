@@ -1,9 +1,7 @@
-import datetime
-
 import jwt
 from django.conf import settings
-from django.http import JsonResponse
 
+from tools.response_tool import ResponseUtil
 from users.models import UmsAdmin
 
 
@@ -18,15 +16,11 @@ def login_check(func):
         # 从request中拿到token
         token = request.META.get("HTTP_AUTHORIZATION")[6:]
         if not token:
-            print(1)
-            result = {"code": 403, "error": "请登录"}
-            return JsonResponse(result)
+            return ResponseUtil.unauthorized()
         try:
             payload = jwt.decode(token, settings.JWT_TOKEN_KEY, algorithms="HS256")
-        except Exception as e:
-            print(e)
-            result = {"code": 403, "error": "请登录"}
-            return JsonResponse(result)
+        except:
+            return ResponseUtil.unauthorized()
 
         username = payload["username"]
         user = UmsAdmin.objects.get(username=username)
@@ -49,4 +43,3 @@ def get_user_by_request(request):
         return None
     username = payload["username"]
     return username
-

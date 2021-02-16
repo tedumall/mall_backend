@@ -1,14 +1,10 @@
+import datetime
 import hashlib
 import json
-import time
-
-from django.conf import settings
-from django.http import JsonResponse
-from django.shortcuts import render
-
 # Create your views here.
 import jwt
 
+from tools.common_tools import make_token
 from tools.response_tool import ResponseUtil
 from users.models import UmsAdmin
 
@@ -30,11 +26,11 @@ def login(request):
         return ResponseUtil.validateFailed("用户名或密码错误")
 
     res = {"tokenHead": "Bearer", "token": make_token("admin")}
+    # 更新登录时间
+    user.login_time = datetime.datetime.now()
+    user.save()
     return ResponseUtil.success(res)
 
 
-def make_token(username, expire=3600 * 24):
-    key = settings.JWT_TOKEN_KEY
-    now = time.time()
-    payload = {"username": username, "exp": now + expire}
-    return jwt.encode(payload, key, algorithm="HS256")
+def logout(request):
+    return ResponseUtil.success(data=None)
